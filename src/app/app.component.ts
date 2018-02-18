@@ -8,7 +8,7 @@ import { HttpService } from './http.service';
 })
 export class AppComponent implements OnInit{
   tasks=[];
-  title = 'appsbbbbb';
+  title = 'Restful Tasks API';
   constructor(private _httpService:HttpService){}
   ngOnInit(){
     this.getTasksFromService();
