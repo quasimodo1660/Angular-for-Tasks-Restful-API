@@ -24,34 +24,46 @@ export class AppComponent implements OnInit{
     this.tasks = data['tasks']
     });  
   }
-  getTaskButtonClick(id){
-    let observable = this._httpService.getTaskByID(id);
-    observable.subscribe(data => {console.log("Got one task!", data)
-    this.newTask={id:data['task'][0]._id,title:data['task'][0].title,description:data['task'][0].description} 
-    });  
+  getTaskButtonClick(task){
+    this.newTask={id:task._id,title:task.title,description:task.description} 
   }
   onSubmit(){
     console.log(this.newTask);
     if('id' in this.newTask){
       let id = this.newTask['id'];
+      this.newTask['completed']=false;
       this._httpService.updateTask(id,this.newTask).subscribe(data=>{
         console.log(data);
-      this.newTask={title:"",description:""}
+        this.newTask={title:"",description:""}
       })
     }
     else{
+      this.newTask['completed']=false;
       this._httpService.addOneTask(this.newTask).subscribe(data=>{
         console.log(data);
-      this.newTask={title:"",description:""}
+        this.newTask={title:"",description:""}
     });
     } 
     this.getTasksFromService();
   }
+
   deleteTask(id){
     this._httpService.removeTask(id).subscribe(data=>{
       console.log(data)
       this.getTasksFromService();
     });    
+  }
+
+  taskComplete(task){
+    if(task.completed)
+      task.completed=false;
+    else
+      task.completed=true;
+    let id = task._id;
+    this._httpService.updateTask(id,task).subscribe(data=>{
+      console.log(data);
+      this.getTasksFromService();
+    })
   }
 }
 

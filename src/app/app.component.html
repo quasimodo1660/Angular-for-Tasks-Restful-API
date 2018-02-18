@@ -7,12 +7,26 @@
 <div class='container'>
 <div id='main' class='row'>
     <ul class='list-group'><h3>Uncomplete</h3>
-      <li *ngFor='let task of tasks' class='list-group-item'>{{task.title}} - {{task.description}} 
+      <ng-container *ngFor='let task of tasks'>
+      <li *ngIf='!task.completed' class='list-group-item'>{{task.title}} - {{task.description}} 
         <button class='btn btn-danger pull-right' (click)='deleteTask(task._id)'>Delete</button>
-        <button class='btn btn-primary pull-right' (click)='getTaskButtonClick(task._id)'>Edit</button>
+        <button class='btn btn-primary pull-right' (click)='getTaskButtonClick(task)'>Edit</button>
+        <button class='btn btn-primary pull-right' (click)='taskComplete(task)'>Done</button>
       </li>
+    </ng-container>
+    </ul>
+  
+</div>
+<div id='main' class='row'>
+    <ul class='list-group' ><h3>Complete</h3>
+      <ng-container *ngFor='let task of tasks'>
+      <li *ngIf='task.completed' class='list-group-item'>{{task.title}} - {{task.description}} 
+        <button class='btn btn-primary pull-right' (click)='taskComplete(task)'>Undone</button>
+      </li>
+      </ng-container>
     </ul>
 </div>
+
 <div class='row'>
   <form (submit)="onSubmit()">
       <div class="form-group">
