@@ -8,14 +8,15 @@ import { templateJitUrl } from '@angular/compiler';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
+  newTask={};
   tasks=[];
   task={};
-  showOne=false;
+  // showOne=false;
   title = 'Restful Tasks API';
   constructor(private _httpService:HttpService){}
   ngOnInit(){
-    // this.getTasksFromService();
-    console.log(task.length)
+    this.getTasksFromService();
+    this.newTask={title:"",description:""};
   }
   getTasksFromService(){
     let observable = this._httpService.getTasks();
@@ -23,19 +24,34 @@ export class AppComponent implements OnInit{
     this.tasks = data['tasks']
     });  
   }
-  getAllButtonClick():void{
-    this.getTasksFromService();
-    
-  }
-  getTaskFromID(id){
+  getTaskButtonClick(id){
     let observable = this._httpService.getTaskByID(id);
     observable.subscribe(data => {console.log("Got one task!", data)
-    this.task = data['task'][0]
-    this.showOne=true;
+    this.newTask={id:data['task'][0]._id,title:data['task'][0].title,description:data['task'][0].description} 
     });  
   }
-  getTaskButtonClick(id){
-    this.getTaskFromID(id);
+  onSubmit(){
+    console.log(this.newTask);
+    if('id' in this.newTask){
+      let id = this.newTask['id'];
+      this._httpService.updateTask(id,this.newTask).subscribe(data=>{
+        console.log(data);
+      this.newTask={title:"",description:""}
+      })
+    }
+    else{
+      this._httpService.addOneTask(this.newTask).subscribe(data=>{
+        console.log(data);
+      this.newTask={title:"",description:""}
+    });
+    } 
+    this.getTasksFromService();
+  }
+  deleteTask(id){
+    this._httpService.removeTask(id).subscribe(data=>{
+      console.log(data)
+      this.getTasksFromService();
+    });    
   }
 }
 
